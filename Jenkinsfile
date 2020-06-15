@@ -40,7 +40,7 @@ pipeline {
                 // uses https://plugins.jenkins.io/lockable-resources
                 lock(resource: 'deployy'){
                     echo 'Deploying...'
-					build job: 'Deploy', wait: true
+					build job: 'Deployy', wait: true
                 }
             }
         }
