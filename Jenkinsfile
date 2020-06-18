@@ -4,14 +4,24 @@ pipeline {
     agent any
     stages {
         
-        stage('Test') {
-            
-            steps {
-                echo 'testing...'
+        stage('Run Tests') {
+				parallel {
+								stage('Unit Test') {
+								agent { label "Unit" }
+								steps {
+								
 				           
-				build job: 'UnitTest', wait: true
-            }
-        }
+									echo 'Unit testing...'
+								}
+								}
+								stage('Regression Test') {
+								agent { label "Regression" }
+								steps {
+									echo 'Regression testing...'
+								}
+								}
+						}
+				}
         stage('Approval') {
             // no agent, so executors are not used up when waiting for approvals
             
