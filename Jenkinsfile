@@ -7,7 +7,7 @@ pipeline {
         stage('Run Tests') {
 				parallel {
 								stage('Unit Test') {
-								agent { label "Unit" }
+								agent any
 								steps {
 								
 				           
@@ -15,7 +15,7 @@ pipeline {
 								}
 								}
 								stage('Regression Test') {
-								agent { label "Regression" }
+								agent any
 								steps {
 									echo 'Regression testing...'
 								}
