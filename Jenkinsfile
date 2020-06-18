@@ -11,7 +11,8 @@ pipeline {
 								steps {
 								
 				           
-									echo 'Unit testing...'
+									echo 'Running Unit Test'
+									build job: 'UnitTest', wait: true
 								}
 								}
 								stage('Regression Test') {
