@@ -7,7 +7,7 @@ pipeline {
 		stage('Pull Changes') {
             
             steps {
-                echo 'Starting Test Execution...'
+                echo 'Fetching changes from Informatica Repository...'
 				           
 				build job: 'Detect_Changes', wait: true
 
@@ -24,7 +24,7 @@ pipeline {
             }
         }
 		
-		stage('Build and Execute') {
+		stage('Build') {
             
             steps {
                 echo 'Building and Executing modified code...'
@@ -70,6 +70,7 @@ pipeline {
         stage('Deploy') {
             
             steps {
+			echo "Deploying code..."
                 // uses https://plugins.jenkins.io/lockable-resources
                 lock(resource: 'Deploy'){
                     echo 'Deploying...'
