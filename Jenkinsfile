@@ -79,10 +79,4 @@ pipeline {
             }
         }
     }
-	
-	post {
-        always {
-            junit '/var/lib/jenkins/workspace/Unit_Test/**/Report.xml'
-        }
-    }
 }
