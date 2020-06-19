@@ -4,12 +4,42 @@ pipeline {
     agent any
     stages {
         
+		stage('Pull Changes') {
+            
+            steps {
+                echo 'Starting Test Execution...'
+				           
+				build job: 'Detect_Changes', wait: true
+
+            }
+        }
+		
+		stage('Check Config') {
+            
+            steps {
+                echo 'Checking configuration file....'
+				           
+				build job: 'Check_Config', wait: true
+
+            }
+        }
+		
+		stage('Build and Execute') {
+            
+            steps {
+                echo 'Building and Executing modified code...'
+				           
+				build job: 'Build_n_Execute', wait: true
+
+            }
+        }
+		
         stage('Test') {
             
             steps {
-                echo 'testing...'
+                echo 'Starting Test Execution...'
 				           
-				build job: 'UnitTest'
+				build job: 'Unit_Test', wait: true
 
             }
         }
@@ -17,6 +47,8 @@ pipeline {
             // no agent, so executors are not used up when waiting for approvals
             
             steps {
+			
+			echo "Sending mail for Test Approval..."
 					mail to: 'manisha.i.sharma@capgemini.com', 
 					subject: "Please approve Jenkins Build UnitTest : ${env.JOB_NAME}: #${env.BUILD_NUMBER}", 
 		body: """
@@ -39,9 +71,9 @@ pipeline {
             
             steps {
                 // uses https://plugins.jenkins.io/lockable-resources
-                lock(resource: 'deployy'){
+                lock(resource: 'Deploy'){
                     echo 'Deploying...'
-					build job: 'Deployy', wait: true
+					build job: 'Deploy', wait: true
                 }
             }
         }
