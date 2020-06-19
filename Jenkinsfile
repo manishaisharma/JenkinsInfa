@@ -9,7 +9,7 @@ pipeline {
             steps {
                 echo 'testing...'
 				           
-				build job: 'UnitTest', wait: true
+				build job: 'UnitTest'
 
             }
         }
