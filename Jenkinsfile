@@ -1,15 +1,61 @@
-
-
 pipeline {
     agent any
+	environment {
+       FOLDER_NAME = "${params.Informatica_Folder}"
+     }
+	 parameters {
+        string(name: 'Informatica_Environment', defaultValue: 'DEV', description: 'Please enter Informatica_Environment from values- DEV, QA, PROD')
+
+        string(name: 'Informatica_Folder', defaultValue: 'SOURCE_F', description: 'Enter your working Source Folder in Informatica')
+	
+		string(name: 'Repository_Label_Query_Name', defaultValue: 'MODIFIED_OBJECTS', description: 'Enter your Repository Query Name to fetch your labeled and modified objects')
+	
+		string(name: 'Database_SID', defaultValue: '10.100.253.11', description: 'Enter Database Host')
+		
+		string(name: 'Database_Host', defaultValue: 'ORA12C', description: 'Enter Database SID')
+		
+		string(name: 'Database_PORT', defaultValue: '1521', description: 'Enter Database PORT')
+		
+		choice(name: 'GitStore', choices: ['https://github.com/manishaisharma/JenkinsInfa.git','https://github.com/manishaisharma/Inf_PC.git','https://github.com/manishaisharma/P_Center.git'], description: 'Pick your Git Repository')
+
+    }
     stages {
         
 		stage('Pull Changes') {
             
-            steps {
+			
+				steps{
+
+
+				script{
+				if (params.Informatica_Environment == "PROD") {
+					orgLogin = "prod_db_repo"
+					orgLogininfa = "prod_pc_login"
+					
+				} else if (params.Informatica_Environment == "QA") {
+					orgLogin = "qa_db_repo"
+					orgLogininfa = "qa_pc_login"
+					
+				} else if (params.Informatica_Environment == "DEV") {
+					orgLogin = "dev_db_repo"
+					orgLogininfa = "dev_pc_login"
+					
+				} else {
+					orgLogin = "dev_db_repo"
+					orgLogininfa = "dev_pc_login"
+				   
+				}
+			
+			  }
+			    
+				git url: params.GitStore, credentialsId: 'My_Git_Creds', branch: 'master'
+			   
+			
                 echo 'Fetching changes from Informatica Repository...'
-				           
-				build job: 'Detect_Changes', wait: true
+				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${orgLogininfa}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+				sh "sh  ${WORKSPACE}/J_Informatica_Scripts/Infa_list_modified_objects.sh  ${username} ${password} ${WORKSPACE} ${params.Informatica_Folder} ${params.Repository_Label_Query_Name}"
+				}
+				
 
             }
         }
@@ -18,8 +64,9 @@ pipeline {
             
             steps {
                 echo 'Checking configuration file....'
-				           
-				build job: 'Check_Config', wait: true
+				sh "sh  ${WORKSPACE}/J_Informatica_Scripts/Infa_check_config_of_modified_objects.sh ${WORKSPACE} "
+
+
 
             }
         }
@@ -28,8 +75,17 @@ pipeline {
             
             steps {
                 echo 'Building and Executing modified code...'
-				           
-				build job: 'Build_n_Execute', wait: true
+				
+
+				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${orgLogininfa}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+				sh '''
+								cat ${WORKSPACE}/List_of_Jobs_with_valid_config.txt | while read line
+				do
+				echo $line
+				sh ${WORKSPACE}/J_Informatica_Scripts/Infa_connect_build_job.sh ${USERNAME} ${PASSWORD} ${WORKSPACE} "\${FOLDER_NAME}" $line
+				done'''
+
+				}
 
             }
         }
@@ -74,7 +130,16 @@ pipeline {
                 // uses https://plugins.jenkins.io/lockable-resources
                 lock(resource: 'Deploy'){
                     echo 'Deploying...'
+					/*sh  "${WORKSPACE}/J_Informatica_Scripts/Infa_Create_Deployment_Group.sh ${username} ${password} ${WORKSPACE}"
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${orgLogininfa}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+					
+					sh  "${WORKSPACE}/J_Informatica_Scripts/Infa_Deploy_Group_Objects.sh  ${username} ${password} ${WORKSPACE} ${params.Informatica_Folder} ${params.Repository_Label_Query_Name}"
+					}
+					*/
+					
 					build job: 'Deploy', wait: true
+					
+					
                 }
             }
         }
