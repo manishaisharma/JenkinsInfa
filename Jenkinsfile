@@ -130,14 +130,14 @@ pipeline {
                 // uses https://plugins.jenkins.io/lockable-resources
                 lock(resource: 'Deploy'){
                     echo 'Deploying...'
-					/*sh  "${WORKSPACE}/J_Informatica_Scripts/Infa_Create_Deployment_Group.sh ${username} ${password} ${WORKSPACE}"
+				
 					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${orgLogininfa}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 					
-					sh  "${WORKSPACE}/J_Informatica_Scripts/Infa_Deploy_Group_Objects.sh  ${username} ${password} ${WORKSPACE} ${params.Informatica_Folder} ${params.Repository_Label_Query_Name}"
+					sh  " sh ${WORKSPACE}/J_Informatica_Scripts/Infa_Deploy_Group_Objects.sh  ${username} ${password} ${WORKSPACE} ${params.Informatica_Folder} ${params.Repository_Label_Query_Name}"
 					}
-					*/
 					
-					build job: 'Deploy', wait: true
+					
+				/*	build job: 'Deploy', wait: true */
 					
 					
                 }
