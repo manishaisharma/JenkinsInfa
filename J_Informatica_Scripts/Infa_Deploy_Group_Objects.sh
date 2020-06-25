@@ -4,17 +4,19 @@ export USERNAME=$1
 export PASSWORD=$2
 export WORKSPACE=$3
 Jenkins_workspace=$WORKSPACE
+export FOLDER=$4
+export Label_Query_Name=$5
 #Jenkins_workspace=/var/lib/jenkins/workspace/Informatica_Start_Pull_Artifcats
 
 SRC_REP=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep SRC_REP | cut -d "=" -f 2`
 TGT_REP=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep SRC_REP | cut -d "=" -f 2`
 DOMAIN=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep DOMAIN | cut -d "=" -f 2`
 INFA_INTEGRATION_SERVICE=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep INFA_INTEGRATION_SERVICE | cut -d "=" -f 2`
-FOLDER=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep FOLDER | cut -d "=" -f 2`
+#FOLDER=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep FOLDER | cut -d "=" -f 2`
 #WORKFLOW=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep WORKFLOW | cut -d "=" -f 2`
 INFA_WORKDIR=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep INFA_WORKDIR | cut -d "=" -f 2`
 DEPLOYMENT_GROUP_NAME=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep DEPLOYMENT_GROUP_NAME | cut -d "=" -f 2`
-Label_Query_Name=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep Label_Query_Name | cut -d "=" -f 2`
+#Label_Query_Name=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep Label_Query_Name | cut -d "=" -f 2`
 BASH_PROFILE_FILE=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep BASH_PROFILE_FILE | cut -d "=" -f 2`
 
 
@@ -32,6 +34,7 @@ LogFileName=Infa_Objects_Deploy_Status_$date.log
 
 
 cat /dev/null>$LogFileDir/$LogFileName
+cat /dev/null>$LogFileDir/$DEPLOYMENT_GROUP_NAME.log
 cd $INFA_WORKDIR
 . $BASH_PROFILE_FILE 
 pmrep connect -r $SRC_REP -d $DOMAIN -n $USERNAME -x $PASSWORD >>$LogFileDir/$LogFileName
@@ -56,7 +59,7 @@ then
 	echo "Deployment of "$DEPLOYMENT_GROUP_NAME" failed."
 	echo "Deployment of "$DEPLOYMENT_GROUP_NAME" failed." >>$LogFileDir/$LogFileName
 	echo "Check the log file "$LogFileDir/$LogFileName
-	echo "Check the deployment log file "$LogFileDir/$DEPLOYMENT_GROUP_NAME.log
+	#echo "Check the deployment log file "$LogFileDir/$DEPLOYMENT_GROUP_NAME.log
 	echo
 	exit 1
 	fi

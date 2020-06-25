@@ -3,16 +3,18 @@
 export USERNAME=$1
 export PASSWORD=$2
 export WORKSPACE=$3
+export FOLDER=$4
+export Label_Query_Name=$5
 
 Jenkins_workspace=$WORKSPACE
 
 SRC_REP=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep SRC_REP | cut -d "=" -f 2`
 DOMAIN=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep DOMAIN | cut -d "=" -f 2`
 INFA_INTEGRATION_SERVICE=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep INFA_INTEGRATION_SERVICE | cut -d "=" -f 2`
-FOLDER=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep FOLDER | cut -d "=" -f 2`
+#FOLDER=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep FOLDER | cut -d "=" -f 2`
 #WORKFLOW=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep WORKFLOW | cut -d "=" -f 2`
 INFA_WORKDIR=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep INFA_WORKDIR | cut -d "=" -f 2`
-Label_Query_Name=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep Label_Query_Name | cut -d "=" -f 2`
+#Label_Query_Name=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep Label_Query_Name | cut -d "=" -f 2`
 BASH_PROFILE_FILE=`cat $Jenkins_workspace/Informatica_Job_config.prm | grep BASH_PROFILE_FILE | cut -d "=" -f 2`
 
 LogFileDir=$INFA_WORKDIR/Logs
@@ -36,11 +38,11 @@ RETURN_CODE=$?
 if [ $RETURN_CODE == 0 ]
 then 
 	echo " Connected to the Repository INFA_REPO, check logs at $LogFileDir/$LogFileName "
-	pmrep executequery -q $Label_Query_Name> $WORKSPACE/Jenkins_Files/list_modified_objects.txt
+	pmrep executequery -q $Label_Query_Name> $WORKSPACE/list_modified_objects.txt
 			if [ $? == 0 ]
 			then 
 				echo "Modified Objects list fectched from Reposirtory, check logs at $LogFileDir/$LogFileName "
-				echo "Modified Objects list present at $WORKSPACE/Jenkins_Files/list_modified_objects.txt"
+				echo "Modified Objects list present at $WORKSPACE/list_modified_objects.txt"
 			else
 				echo "Failed to EXECUTE job,  check logs at $LogFileDir/$LogFileName"
 				exit 1
