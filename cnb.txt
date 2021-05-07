@@ -1,0 +1,16 @@
+Existing Changes--
+
+1)
+
+Add the two inputs - Source connection , Target connection
+Select Plan- Imporve naming convention
+CLick on Execute. It will trigger the job against on source and target
+Monitor the job
+Email the status
+
+2) 
+
+Check on deployment on Azure
+
+
+Timeline: 15 May
